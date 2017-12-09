@@ -78,7 +78,7 @@ namespace VDMBackgroundManager
 						vdm.MoveWindowToDesktop(Handle, vdm.GetWindowDesktopId(nw.Handle));
 					}
 
-					Console.WriteLine("Switching...");
+					//Console.WriteLine(string.Concat("Switching...", vdmList.Count));
 
 					// add new VDM Guid to list, if not existing
 					currentVD = vdm.GetWindowDesktopId(this.Handle);
