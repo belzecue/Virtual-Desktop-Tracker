@@ -17,6 +17,7 @@ namespace VDMBackgroundManager
 		private ContextMenu menu;
 		private int vdNumber;
 		private Guid currentVD;
+		private System.ComponentModel.ComponentResourceManager resources;
 
 		public VDWindow()
 		{
@@ -78,6 +79,7 @@ namespace VDMBackgroundManager
 					// update icon display
 					if (vdmList.TryGetValue(currentVD, out vdNumber))
 					{
+						this.notifyIcon.Icon = ((System.Drawing.Icon)(resources.GetObject(string.Concat("notifyIcon", vdNumber, ".Icon"))));
 						notifyIcon.Text = "VDM = " + vdNumber;
 					}
 				}
@@ -155,7 +157,7 @@ namespace VDMBackgroundManager
 			// NotifyIcon
 			//
 			this.notifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
+			resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
 
 			this.notifyIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon1.Icon")));
 			this.notifyIcon.Text = "notifyIcon";
