@@ -14,6 +14,7 @@ namespace VDMBackgroundManager
 	{
 		private Dictionary<Guid, int> vdmList = new Dictionary<Guid, int>();
 		private NotifyIcon notifyIcon;
+		private ContextMenu menu;
 
 		public VDWindow()
 		{
@@ -35,11 +36,9 @@ namespace VDMBackgroundManager
 			this.ShowInTaskbar = false;
 		}
 
-		private void VDWindow_Resize(object sender, EventArgs e)
+		private void VDWindow_Exit(object sender, EventArgs e)
 		{
-			if (this.WindowState == FormWindowState.Minimized)
-			{
-			}
+			Application.Exit();
 		}
 
 		private void Label1_Click(object sender, EventArgs e)
@@ -144,24 +143,26 @@ namespace VDMBackgroundManager
 			this.ResumeLayout(false);
 
 			//
-			// NotifyIcons
+			// NotifyIcon
 			//
 			this.notifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
-			//this.notifyIcon2 = new System.Windows.Forms.NotifyIcon(this.components);
-			//this.notifyIcon3 = new System.Windows.Forms.NotifyIcon(this.components);
-
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
 
-
-			// 
-			// notifyIcon1
-			// 
 			this.notifyIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon1.Icon")));
 			this.notifyIcon.Text = "notifyIcon";
 			this.notifyIcon.Visible = false;
 			this.notifyIcon.BalloonTipIcon = System.Windows.Forms.ToolTipIcon.Info;
 			this.notifyIcon.BalloonTipText = "[Balloon Text when Minimized]";
 			this.notifyIcon.BalloonTipTitle = "[Balloon Title when Minimized]";
+
+			//
+			// Context menu
+			//
+			menu = new ContextMenu();
+			menu.MenuItems.Add(0,
+				new MenuItem("Exit", new System.EventHandler(this.VDWindow_Exit))
+			);
+			notifyIcon.ContextMenu = menu;
 		}
 
 		#endregion
