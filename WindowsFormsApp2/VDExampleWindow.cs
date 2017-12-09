@@ -19,6 +19,15 @@ namespace VDMBackgroundManager
 		private Guid currentVD;
 		private System.ComponentModel.ComponentResourceManager resources;
 
+		private class TestWindow: NewWindow
+		{
+			public TestWindow()
+			{
+				this.Size = Size.Empty;
+				this.FormBorderStyle = FormBorderStyle.None;
+			}
+		}
+
 		public VDWindow()
 		{
 			InitializeComponent();
@@ -63,10 +72,9 @@ namespace VDMBackgroundManager
 				// move window to current VD
 				if (!vdm.IsWindowOnCurrentVirtualDesktop(Handle))
 				{
-					using (NewWindow nw = new NewWindow())
+					using (TestWindow nw = new TestWindow())
 					{
 						nw.Show(null);
-						//vdm.MoveWindowToDesktop(Handle, currentVD);
 						vdm.MoveWindowToDesktop(Handle, vdm.GetWindowDesktopId(nw.Handle));
 					}
 
