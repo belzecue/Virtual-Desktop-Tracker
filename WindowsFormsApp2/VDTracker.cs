@@ -14,7 +14,7 @@ namespace VDTracker
 		private Dictionary<Guid, int> vdmList = new Dictionary<Guid, int>();
 		private NotifyIcon notifyIcon;
 		private ContextMenu menu;
-		private int vdNumber = 0;
+		private int vdNumber = 0, priorVDNumber = 0;
 		private Guid currentVD;
 		private int VDCheckInterval = 500;
 		private string info;
@@ -85,12 +85,16 @@ namespace VDTracker
 					if (!vdmList.ContainsKey(currentVD)) vdmList.Add(currentVD, vdmList.Count + 1);
 
 					// update icon display
-					if (vdmList.TryGetValue(currentVD, out vdNumber))
+					if (
+							vdmList.TryGetValue(currentVD, out vdNumber)
+							&& vdNumber != priorVDNumber
+						)
 					{
 						this.notifyIcon.Icon = ((System.Drawing.Icon)(resources.GetObject(string.Concat("notifyIcon", vdNumber, ".Icon"))));
 						info = string.Concat("VD: ", vdNumber);
 						notifyIcon.Text = info;
 						this.Text = info;
+						priorVDNumber = vdNumber;
 					}
 				}
 			}
