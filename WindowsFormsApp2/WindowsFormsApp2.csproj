@@ -91,6 +91,7 @@
     <Content Include="Icons\007-three.ico" />
     <Content Include="Icons\008-two.ico" />
     <Content Include="Icons\009-one.ico" />
+    <Content Include="Icons\zero.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

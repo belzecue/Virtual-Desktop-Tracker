@@ -39,6 +39,7 @@
 			this.notifyIcon7 = new System.Windows.Forms.NotifyIcon(this.components);
 			this.notifyIcon8 = new System.Windows.Forms.NotifyIcon(this.components);
 			this.notifyIcon9 = new System.Windows.Forms.NotifyIcon(this.components);
+			this.notifyIcon0 = new System.Windows.Forms.NotifyIcon(this.components);
 			this.SuspendLayout();
 			// 
 			// notifyIcon1
@@ -95,6 +96,12 @@
 			this.notifyIcon9.Text = "notifyIcon1";
 			this.notifyIcon9.Visible = true;
 			// 
+			// notifyIcon0
+			// 
+			this.notifyIcon0.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon0.Icon")));
+			this.notifyIcon0.Text = "notifyIcon1";
+			this.notifyIcon0.Visible = true;
+			// 
 			// Form1
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -117,6 +124,7 @@
 		private System.Windows.Forms.NotifyIcon notifyIcon7;
 		private System.Windows.Forms.NotifyIcon notifyIcon8;
 		private System.Windows.Forms.NotifyIcon notifyIcon9;
+		private System.Windows.Forms.NotifyIcon notifyIcon0;
 	}
 }
 

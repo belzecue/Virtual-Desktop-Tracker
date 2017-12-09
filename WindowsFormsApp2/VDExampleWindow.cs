@@ -17,9 +17,10 @@ namespace VDMBackgroundManager
 		private ContextMenu menu;
 		private int vdNumber;
 		private Guid currentVD;
+		private int VDCheckInterval = 500;
 		private System.ComponentModel.ComponentResourceManager resources;
 
-		private class TestWindow: NewWindow
+		private class TestWindow : NewWindow
 		{
 			public TestWindow()
 			{
@@ -43,7 +44,6 @@ namespace VDMBackgroundManager
 
 			// minimize window to tray
 			notifyIcon.Visible = true;
-			notifyIcon.ShowBalloonTip(3000);
 			this.WindowState = FormWindowState.Minimized;
 			this.ShowInTaskbar = false;
 		}
@@ -53,13 +53,12 @@ namespace VDMBackgroundManager
 			Application.Exit();
 		}
 
-		private void Label1_Click(object sender, EventArgs e)
+		private void VDWindow_Reveal(object sender, EventArgs e)
 		{
-			//Show details on click
-			MessageBox.Show("Virtual Desktop ID: " + vdm.GetWindowDesktopId(Handle).ToString("X") + Environment.NewLine +
-				"IsCurrentVirtualDesktop: " + vdm.IsWindowOnCurrentVirtualDesktop(Handle).ToString()
-				);
+			this.WindowState = FormWindowState.Normal;
+
 		}
+
 		//Timer tick to check if the window is on the current virtual desktop and change it otherwise
 		//A timer does not have to be used, but something has to trigger the check
 		//If the window was active before the vd change, it would trigger 
@@ -72,6 +71,7 @@ namespace VDMBackgroundManager
 				// move window to current VD
 				if (!vdm.IsWindowOnCurrentVirtualDesktop(Handle))
 				{
+
 					using (TestWindow nw = new TestWindow())
 					{
 						nw.Show(null);
@@ -88,14 +88,16 @@ namespace VDMBackgroundManager
 					if (vdmList.TryGetValue(currentVD, out vdNumber))
 					{
 						this.notifyIcon.Icon = ((System.Drawing.Icon)(resources.GetObject(string.Concat("notifyIcon", vdNumber, ".Icon"))));
-						notifyIcon.Text = "VDM = " + vdNumber;
+						string info = string.Concat("VD: ", vdNumber);
+						notifyIcon.Text = info;
+						this.Text = info;
 					}
 				}
 			}
 			catch
 			{
 				//This will fail due to race conditions as currently written on occassion
-				Console.WriteLine("Error here");
+				Console.WriteLine("Failed due to race condition");
 			}
 		}
 
@@ -126,37 +128,23 @@ namespace VDMBackgroundManager
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
-			this.label1 = new System.Windows.Forms.Label();
 			this.VDCheckTimer = new System.Windows.Forms.Timer(this.components);
 			this.SuspendLayout();
-			// 
-			// label1
-			// 
-			this.label1.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.875F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.label1.Location = new System.Drawing.Point(0, 0);
-			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(1112, 368);
-			this.label1.TabIndex = 0;
-			this.label1.Text = "Example Contents";
-			this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-			this.label1.Click += new System.EventHandler(this.Label1_Click);
 			// 
 			// VDCheckTimer
 			// 
 			this.VDCheckTimer.Enabled = true;
-			this.VDCheckTimer.Interval = 1000;
+			this.VDCheckTimer.Interval = VDCheckInterval;
 			this.VDCheckTimer.Tick += new System.EventHandler(this.VDCheckTimer_Tick);
 			// 
 			// VDWindow
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(1112, 368);
-			this.Controls.Add(this.label1);
+			this.ClientSize = new System.Drawing.Size(500, 0);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
 			this.Name = "VDWindow";
-			this.Text = "VD Example";
+			this.Text = string.Concat("VD: ", vdNumber);
 			this.TopMost = true;
 			this.Load += new System.EventHandler(this.VDWindow_Load);
 			this.ResumeLayout(false);
@@ -167,12 +155,7 @@ namespace VDMBackgroundManager
 			this.notifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
 			resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
 
-			this.notifyIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon1.Icon")));
-			this.notifyIcon.Text = "notifyIcon";
-			this.notifyIcon.Visible = false;
-			this.notifyIcon.BalloonTipIcon = System.Windows.Forms.ToolTipIcon.Info;
-			this.notifyIcon.BalloonTipText = "[Balloon Text when Minimized]";
-			this.notifyIcon.BalloonTipTitle = "[Balloon Title when Minimized]";
+			this.notifyIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon0.Icon")));
 
 			//
 			// Context menu
@@ -181,12 +164,14 @@ namespace VDMBackgroundManager
 			menu.MenuItems.Add(0,
 				new MenuItem("Exit", new System.EventHandler(this.VDWindow_Exit))
 			);
+			menu.MenuItems.Add(1,
+				new MenuItem("Show", new System.EventHandler(this.VDWindow_Reveal))
+			);
 			notifyIcon.ContextMenu = menu;
 		}
 
 		#endregion
 
-		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Timer VDCheckTimer;
 
 		[STAThread]
