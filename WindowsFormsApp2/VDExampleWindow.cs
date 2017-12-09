@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using WindowsFormsApp2;
 
 namespace VDMBackgroundManager
 {
@@ -9,18 +12,28 @@ namespace VDMBackgroundManager
 	/// </summary>
 	public partial class VDWindow : Form
 	{
+		private Dictionary<Guid, int> vdmList = new Dictionary<Guid, int>();
+		private NotifyIcon notifyIcon1;
+		private NotifyIcon notifyIcon2;
+		private NotifyIcon notifyIcon3;
+
+		private NotifyIcon[] notifyIcons = new NotifyIcon[] {  };
+
 		public VDWindow()
 		{
 			InitializeComponent();
+			//BackColor = Color.Magenta;
+			//TransparencyKey = Color.Magenta;
 		}
+
 		private VirtualDesktopManager vdm;
-		private void VDExampleWindow_Load(object sender, EventArgs e)
+		private void VDWindow_Load(object sender, EventArgs e)
 		{
 			//Create IVirtualDesktopManager on load
 			vdm = new VirtualDesktopManager();
 		}
 
-		private void label1_Click(object sender, EventArgs e)
+		private void Label1_Click(object sender, EventArgs e)
 		{
 			//Show details on click
 			MessageBox.Show("Virtual Desktop ID: " + vdm.GetWindowDesktopId(Handle).ToString("X") + Environment.NewLine +
@@ -41,7 +54,15 @@ namespace VDMBackgroundManager
 					using (NewWindow nw = new NewWindow())
 					{
 						nw.Show(null);
-						vdm.MoveWindowToDesktop(Handle, vdm.GetWindowDesktopId(nw.Handle));
+						Guid newVDM = vdm.GetWindowDesktopId(nw.Handle);
+						vdm.MoveWindowToDesktop(Handle, newVDM);
+
+						// add new VDM Guid to list, if not existing
+						if (!vdmList.ContainsKey(newVDM)) vdmList.Add(newVDM, vdmList.Count + 1);
+
+						// update display
+						int vdmNumber;
+						if (vdmList.TryGetValue(newVDM, out vdmNumber)) this.label1.Text = "VDM = " + vdmNumber; 
 					}
 				}
 			}
@@ -92,7 +113,7 @@ namespace VDMBackgroundManager
 			this.label1.TabIndex = 0;
 			this.label1.Text = "Example Contents";
 			this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-			this.label1.Click += new System.EventHandler(this.label1_Click);
+			this.label1.Click += new System.EventHandler(this.Label1_Click);
 			// 
 			// VDCheckTimer
 			// 
@@ -100,19 +121,45 @@ namespace VDMBackgroundManager
 			this.VDCheckTimer.Interval = 1000;
 			this.VDCheckTimer.Tick += new System.EventHandler(this.VDCheckTimer_Tick);
 			// 
-			// VDExampleWindow
+			// VDWindow
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(1112, 368);
 			this.Controls.Add(this.label1);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
-			this.Name = "VDExampleWindow";
+			this.Name = "VDWindow";
 			this.Text = "VD Example";
 			this.TopMost = true;
-			this.Load += new System.EventHandler(this.VDExampleWindow_Load);
+			this.Load += new System.EventHandler(this.VDWindow_Load);
 			this.ResumeLayout(false);
 
+			//
+			// NotifyIcons
+			//
+			this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
+			this.notifyIcon2 = new System.Windows.Forms.NotifyIcon(this.components);
+			this.notifyIcon3 = new System.Windows.Forms.NotifyIcon(this.components);
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
+
+			// 
+			// notifyIcon1
+			// 
+			this.notifyIcon1.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon1.Icon")));
+			this.notifyIcon1.Text = "notifyIcon1";
+			this.notifyIcon1.Visible = true;
+			// 
+			// notifyIcon2
+			// 
+			this.notifyIcon2.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon2.Icon")));
+			this.notifyIcon2.Text = "notifyIcon1";
+			this.notifyIcon2.Visible = true;
+			// 
+			// notifyIcon3
+			// 
+			this.notifyIcon3.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon3.Icon")));
+			this.notifyIcon3.Text = "notifyIcon1";
+			this.notifyIcon3.Visible = true;
 		}
 
 		#endregion
