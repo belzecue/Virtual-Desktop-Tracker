@@ -34,8 +34,8 @@ namespace VDMBackgroundManager
 			// minimize window to tray
 			notifyIcon.Visible = true;
 			notifyIcon.ShowBalloonTip(3000);
-			//this.Hide();
-			//this.ShowInTaskbar = false;
+			this.WindowState = FormWindowState.Minimized;
+			this.ShowInTaskbar = false;
 		}
 
 		private void VDWindow_Exit(object sender, EventArgs e)
@@ -59,36 +59,33 @@ namespace VDMBackgroundManager
 		{
 			try
 			{
-				// add new VDM Guid to list, if not existing
-				currentVD = vdm.GetWindowDesktopId(this.Handle);
-				if (!vdmList.ContainsKey(currentVD)) vdmList.Add(currentVD, vdmList.Count + 1);
-
 				// move window to current VD
 				if (!vdm.IsWindowOnCurrentVirtualDesktop(Handle))
 				{
 					using (NewWindow nw = new NewWindow())
 					{
 						nw.Show(null);
-						vdm.MoveWindowToDesktop(Handle, currentVD);
+						//vdm.MoveWindowToDesktop(Handle, currentVD);
+						vdm.MoveWindowToDesktop(Handle, vdm.GetWindowDesktopId(nw.Handle));
 					}
 
 					Console.WriteLine("Switching...");
-				}
 
-				// update icon display
-				//currentVD = vdm.GetWindowDesktopId(this.Handle);
-				if (vdmList.TryGetValue(currentVD, out vdNumber))
-				{
-					notifyIcon.Text = "VDM = " + vdNumber;
-					//this.label1.Text = "VDM = " + vdNumber;
-				}
+					// add new VDM Guid to list, if not existing
+					currentVD = vdm.GetWindowDesktopId(this.Handle);
+					if (!vdmList.ContainsKey(currentVD)) vdmList.Add(currentVD, vdmList.Count + 1);
 
+					// update icon display
+					if (vdmList.TryGetValue(currentVD, out vdNumber))
+					{
+						notifyIcon.Text = "VDM = " + vdNumber;
+					}
+				}
 			}
 			catch
 			{
 				//This will fail due to race conditions as currently written on occassion
 				Console.WriteLine("Error here");
-
 			}
 		}
 
