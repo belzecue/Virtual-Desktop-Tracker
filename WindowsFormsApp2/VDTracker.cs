@@ -17,6 +17,7 @@ namespace VDTracker
 		private int vdNumber = 0;
 		private Guid currentVD;
 		private int VDCheckInterval = 500;
+		private string info;
 		private System.ComponentModel.ComponentResourceManager resources;
 
 		private class TestWindow : NewWindow
@@ -87,7 +88,7 @@ namespace VDTracker
 					if (vdmList.TryGetValue(currentVD, out vdNumber))
 					{
 						this.notifyIcon.Icon = ((System.Drawing.Icon)(resources.GetObject(string.Concat("notifyIcon", vdNumber, ".Icon"))));
-						string info = string.Concat("VD: ", vdNumber);
+						info = string.Concat("VD: ", vdNumber);
 						notifyIcon.Text = info;
 						this.Text = info;
 					}
@@ -96,7 +97,7 @@ namespace VDTracker
 			catch
 			{
 				//This will fail due to race conditions as currently written on occassion
-				Console.WriteLine("Failed due to race condition");
+				//Console.WriteLine("Failed due to race condition");
 			}
 		}
 
