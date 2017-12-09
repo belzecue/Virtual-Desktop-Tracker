@@ -14,7 +14,7 @@ namespace VDTracker
 		private Dictionary<Guid, int> vdmList = new Dictionary<Guid, int>();
 		private NotifyIcon notifyIcon;
 		private ContextMenu menu;
-		private int vdNumber;
+		private int vdNumber = 0;
 		private Guid currentVD;
 		private int VDCheckInterval = 500;
 		private System.ComponentModel.ComponentResourceManager resources;
