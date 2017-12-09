@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using WindowsFormsApp2;
+using VDTracker;
 
 namespace VDMBackgroundManager
 {

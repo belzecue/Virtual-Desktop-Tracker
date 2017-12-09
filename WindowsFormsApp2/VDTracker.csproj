@@ -45,6 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IniFile.cs" />
     <Compile Include="VDExampleWindow.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -1,4 +1,4 @@
-﻿namespace WindowsFormsApp2
+﻿namespace VDTracker
 {
 	partial class Form1
 	{
