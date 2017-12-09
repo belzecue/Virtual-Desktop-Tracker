@@ -46,7 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IniFile.cs" />
-    <Compile Include="VDExampleWindow.cs">
+    <Compile Include="VDTracker.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Form1.cs">

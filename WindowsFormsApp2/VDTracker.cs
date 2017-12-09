@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using VDTracker;
 
-namespace VDMBackgroundManager
+namespace VDTracker
 {
 	/// <summary>
 	/// Example form
