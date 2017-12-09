@@ -13,11 +13,7 @@ namespace VDMBackgroundManager
 	public partial class VDWindow : Form
 	{
 		private Dictionary<Guid, int> vdmList = new Dictionary<Guid, int>();
-		private NotifyIcon notifyIcon1;
-		private NotifyIcon notifyIcon2;
-		private NotifyIcon notifyIcon3;
-
-		private NotifyIcon[] notifyIcons = new NotifyIcon[] {  };
+		private NotifyIcon notifyIcon;
 
 		public VDWindow()
 		{
@@ -31,6 +27,19 @@ namespace VDMBackgroundManager
 		{
 			//Create IVirtualDesktopManager on load
 			vdm = new VirtualDesktopManager();
+
+			// minimize window to tray
+			notifyIcon.Visible = true;
+			notifyIcon.ShowBalloonTip(3000);
+			this.Hide();
+			this.ShowInTaskbar = false;
+		}
+
+		private void VDWindow_Resize(object sender, EventArgs e)
+		{
+			if (this.WindowState == FormWindowState.Minimized)
+			{
+			}
 		}
 
 		private void Label1_Click(object sender, EventArgs e)
@@ -137,29 +146,22 @@ namespace VDMBackgroundManager
 			//
 			// NotifyIcons
 			//
-			this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
-			this.notifyIcon2 = new System.Windows.Forms.NotifyIcon(this.components);
-			this.notifyIcon3 = new System.Windows.Forms.NotifyIcon(this.components);
+			this.notifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
+			//this.notifyIcon2 = new System.Windows.Forms.NotifyIcon(this.components);
+			//this.notifyIcon3 = new System.Windows.Forms.NotifyIcon(this.components);
+
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
+
 
 			// 
 			// notifyIcon1
 			// 
-			this.notifyIcon1.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon1.Icon")));
-			this.notifyIcon1.Text = "notifyIcon1";
-			this.notifyIcon1.Visible = true;
-			// 
-			// notifyIcon2
-			// 
-			this.notifyIcon2.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon2.Icon")));
-			this.notifyIcon2.Text = "notifyIcon1";
-			this.notifyIcon2.Visible = true;
-			// 
-			// notifyIcon3
-			// 
-			this.notifyIcon3.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon3.Icon")));
-			this.notifyIcon3.Text = "notifyIcon1";
-			this.notifyIcon3.Visible = true;
+			this.notifyIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon1.Icon")));
+			this.notifyIcon.Text = "notifyIcon";
+			this.notifyIcon.Visible = false;
+			this.notifyIcon.BalloonTipIcon = System.Windows.Forms.ToolTipIcon.Info;
+			this.notifyIcon.BalloonTipText = "[Balloon Text when Minimized]";
+			this.notifyIcon.BalloonTipTitle = "[Balloon Title when Minimized]";
 		}
 
 		#endregion
