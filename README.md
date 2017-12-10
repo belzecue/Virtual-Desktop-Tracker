@@ -8,7 +8,7 @@ Initially the icon will display "0," meaning no virtual desktops are in use.  Wh
 
 ## Getting Started
 
-Put the VDTracker.exe somewhere, create a shortcut to it, open a file explorer with 'shell:startup' and drop the shortcut in there so the program starts as boot.
+Put VDTracker.exe somewhere, create a shortcut to it, open a file explorer with 'shell:startup' and drop the shortcut in there so the program starts as boot.
 
 ### Prerequisites
 
