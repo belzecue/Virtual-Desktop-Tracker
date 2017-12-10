@@ -14,10 +14,6 @@ Put VDTracker.exe somewhere, create a shortcut to it, open a file explorer with 
 
 Build targetted for dotnet 2.
 
-### Installing
-
-Put the VDTracker.exe somewhere, create a shortcut to it, open a file explorer with 'shell:startup' and drop the shortcut in there so the program starts as boot.
-
 ## Roadmap
 
 Possibility of adding a virtual desktop background image manager to auto-switch backgrounds -- unless MS eventually beats me to that no-brainer.
