@@ -34,14 +34,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Net.Http" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
@@ -83,18 +78,17 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
-    <Content Include="Icons\001-nine.ico" />
-    <Content Include="Icons\002-eight.ico" />
-    <Content Include="Icons\003-seven.ico" />
-    <Content Include="Icons\004-six.ico" />
-    <Content Include="Icons\005-five.ico" />
-    <Content Include="Icons\006-four.ico" />
-    <Content Include="Icons\007-three.ico" />
-    <Content Include="Icons\008-two.ico" />
-    <Content Include="Icons\009-one.ico" />
-    <Content Include="Icons\zero.ico" />
+    <Content Include="Icons\0.ico" />
+    <Content Include="Icons\1.ico" />
+    <Content Include="Icons\2.ico" />
+    <Content Include="Icons\3.ico" />
+    <Content Include="Icons\4.ico" />
+    <Content Include="Icons\5.ico" />
+    <Content Include="Icons\6.ico" />
+    <Content Include="Icons\7.ico" />
+    <Content Include="Icons\8.ico" />
+    <Content Include="Icons\9.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
