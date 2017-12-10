@@ -1,4 +1,4 @@
-# Project Title
+# Windows 10 Virtual Desktop Tracker
 
 When using Windows 10's virtual desktops feature, there's no way to tell at a glance which virtual desktop you're currently on.
 
