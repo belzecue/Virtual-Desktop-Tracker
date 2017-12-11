@@ -79,16 +79,16 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Icons\0.ico" />
-    <Content Include="Icons\1.ico" />
-    <Content Include="Icons\2.ico" />
-    <Content Include="Icons\3.ico" />
-    <Content Include="Icons\4.ico" />
-    <Content Include="Icons\5.ico" />
-    <Content Include="Icons\6.ico" />
-    <Content Include="Icons\7.ico" />
-    <Content Include="Icons\8.ico" />
-    <Content Include="Icons\9.ico" />
+    <Content Include="Icons\BlueWhite\0.ico" />
+    <Content Include="Icons\BlueWhite\1.ico" />
+    <Content Include="Icons\BlueWhite\2.ico" />
+    <Content Include="Icons\BlueWhite\3.ico" />
+    <Content Include="Icons\BlueWhite\4.ico" />
+    <Content Include="Icons\BlueWhite\5.ico" />
+    <Content Include="Icons\BlueWhite\6.ico" />
+    <Content Include="Icons\BlueWhite\7.ico" />
+    <Content Include="Icons\BlueWhite\8.ico" />
+    <Content Include="Icons\BlueWhite\9.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
