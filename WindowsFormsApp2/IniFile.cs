@@ -9,8 +9,8 @@ namespace VDTracker
 {
 	class IniFile   // revision 11
 	{
-		string Path;
-		string EXE = Assembly.GetExecutingAssembly().GetName().Name;
+		public string path = AppDomain.CurrentDomain.BaseDirectory;
+		string exeName = Assembly.GetExecutingAssembly().GetName().Name;
 
 		[DllImport("kernel32", CharSet = CharSet.Unicode)]
 		static extern long WritePrivateProfileString(string Section, string Key, string Value, string FilePath);
@@ -18,31 +18,31 @@ namespace VDTracker
 		[DllImport("kernel32", CharSet = CharSet.Unicode)]
 		static extern int GetPrivateProfileString(string Section, string Key, string Default, StringBuilder RetVal, int Size, string FilePath);
 
-		public IniFile(string IniPath = null)
+		public IniFile()
 		{
-			Path = new FileInfo(IniPath ?? EXE + ".ini").FullName.ToString();
+			path = new FileInfo(Path.Combine(path, exeName + ".ini")).FullName.ToString();
 		}
 
 		public string Read(string Key, string Section = null)
 		{
 			var RetVal = new StringBuilder(255);
-			GetPrivateProfileString(Section ?? EXE, Key, "", RetVal, 255, Path);
+			GetPrivateProfileString(Section ?? exeName, Key, "", RetVal, 255, path);
 			return RetVal.ToString();
 		}
 
 		public void Write(string Key, string Value, string Section = null)
 		{
-			WritePrivateProfileString(Section ?? EXE, Key, Value, Path);
+			WritePrivateProfileString(Section ?? exeName, Key, Value, path);
 		}
 
 		public void DeleteKey(string Key, string Section = null)
 		{
-			Write(Key, null, Section ?? EXE);
+			Write(Key, null, Section ?? exeName);
 		}
 
 		public void DeleteSection(string Section = null)
 		{
-			Write(null, null, Section ?? EXE);
+			Write(null, null, Section ?? exeName);
 		}
 
 		public bool KeyExists(string Key, string Section = null)
