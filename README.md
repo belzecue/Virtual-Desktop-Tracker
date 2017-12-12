@@ -10,7 +10,7 @@ Initially the icon will display "0," meaning no virtual desktops are in use.  Wh
 
 Put VDTracker.exe somewhere, create a shortcut to it, open a file explorer with 'shell:startup' and drop the shortcut in there so the program starts as boot.
 
-Learn how to [configure individual virtual desktop backgrounds](https://github.com/belzecue/VDTracker/wiki/Inifile).
+Learn how to [configure individual virtual desktop backgrounds](https://github.com/belzecue/VDTracker/wiki/INI-file).
 
 ### Prerequisites
 
