@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using System.IO;
+using System.Reflection;
+using System.Diagnostics;
+using System.Threading;
 
 namespace VDTracker
 {
@@ -16,8 +20,10 @@ namespace VDTracker
 		private ContextMenu menu;
 		private int vdNumber = 0, priorVDNumber = 0;
 		private Guid currentVD;
-		private int VDCheckInterval = 500;
+		private int VDCheckInterval = 250;
 		private string info;
+		private static IniFile iniFile;
+		private string[] origDesktopSetting;
 		private System.ComponentModel.ComponentResourceManager resources;
 
 		private class TestWindow : NewWindow
@@ -29,11 +35,24 @@ namespace VDTracker
 			}
 		}
 
+		static void OnProcessExit(object sender, EventArgs e)
+		{
+			Wallpaper.Set(0, iniFile);
+		}
+
 		public VDWindow()
 		{
 			InitializeComponent();
 			//BackColor = Color.Magenta;
 			//TransparencyKey = Color.Magenta;
+
+			// Initialize INI file
+			string result;
+			if ((result = InitializeINIFile()) != string.Empty)
+			{
+				Console.WriteLine(string.Concat("Failed to initialize INI file: ", result));
+				Application.Exit();
+			}
 		}
 
 		private VirtualDesktopManager vdm;
@@ -71,7 +90,6 @@ namespace VDTracker
 				// move window to current VD
 				if (!vdm.IsWindowOnCurrentVirtualDesktop(Handle))
 				{
-
 					using (TestWindow nw = new TestWindow())
 					{
 						nw.Show(null);
@@ -95,13 +113,16 @@ namespace VDTracker
 						notifyIcon.Text = info;
 						this.Text = info;
 						priorVDNumber = vdNumber;
+
+						// Update background image
+						Wallpaper.Set(vdNumber, iniFile);
 					}
 				}
 			}
 			catch
 			{
 				//This will fail due to race conditions as currently written on occassion
-				//Console.WriteLine("Failed due to race condition");
+				Console.WriteLine("Failed due to race condition");
 			}
 		}
 
@@ -172,6 +193,11 @@ namespace VDTracker
 				new MenuItem("Show", new System.EventHandler(this.VDWindow_Reveal))
 			);
 			notifyIcon.ContextMenu = menu;
+
+			//
+			// hook into exit for cleanup
+			//
+			AppDomain.CurrentDomain.ProcessExit += new EventHandler(OnProcessExit);
 		}
 
 		#endregion
@@ -184,6 +210,80 @@ namespace VDTracker
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
 			Application.Run(new VDWindow());
+		}
+
+		private string InitializeINIFile()
+		{
+			if (iniFile == null)
+			{
+				try
+				{
+					iniFile = new IniFile();
+					origDesktopSetting = Wallpaper.GetDesktopSettings();
+
+					// record current desktop wallpaper settings
+					iniFile.Write("wallpaperStyle", origDesktopSetting[0], "VD0");
+					iniFile.Write("tileWallpaper", origDesktopSetting[1], "VD0");
+					iniFile.Write("wallpaper", origDesktopSetting[2], "VD0");
+
+					if (iniFile.Read("fileVersion", "Application") == string.Empty)
+					{
+						// no ini file yet, so create a default one
+
+						iniFile.Write(
+							"wallpaperStyles"
+							, string.Concat(
+								"Stretched:2, ", 
+								"Centered:0, ",
+								"Tiled:0, ",
+								"Fill:10, ",
+								"Fit:6"
+							)
+							,"Help"
+						);
+						iniFile.Write(
+							"tileWallpaper"
+							, string.Concat(
+								"Tiled:1, ",
+								"Not Tiled:0"
+							)
+							, "Help"
+						);
+
+						iniFile.Write(
+							"fileVersion"
+							, FileVersionInfo.GetVersionInfo(iniFile.exeName).FileVersion.ToString()
+							, "Application"
+						);
+
+						for (int i = 1; i <= 9; i++)
+						{
+							string vd = string.Concat("VD", i);
+							iniFile.Write("wallpaperStyle", origDesktopSetting[0], vd);
+							iniFile.Write("tileWallpaper", origDesktopSetting[1], vd);
+							iniFile.Write("wallpaper", ConvertPathToURI(origDesktopSetting[2]), vd);
+						}
+					}
+
+					// update current background storage
+
+
+					return string.Empty;
+				}
+				catch (Exception ex)
+				{
+					return ex.Message;
+				}
+			}
+			else return string.Empty;
+		}
+
+		private string ConvertPathToURI(string path)
+		{
+			return string.Concat(
+				@"file:///"
+				, path.Replace(@"\", "/")
+		   );
 		}
 	}
 	[ComImport, InterfaceType(ComInterfaceType.InterfaceIsIUnknown), Guid("a5cd92ff-29be-454c-8d04-d82879fb3f1b")]
