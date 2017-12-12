@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using System.IO;
 using System.Reflection;
 using System.Diagnostics;
+using System.Threading;
 
 namespace VDTracker
 {
@@ -84,55 +85,42 @@ namespace VDTracker
 				// move window to current VD
 				if (!vdm.IsWindowOnCurrentVirtualDesktop(Handle))
 				{
-					using (
-						new System.Threading.Timer(
-							(obj) =>
-								{
-									using (TestWindow nw = new TestWindow())
-									{
-										nw.Show(null);
-										vdm.MoveWindowToDesktop(Handle, vdm.GetWindowDesktopId(nw.Handle));
-									}
-
-									//Console.WriteLine(string.Concat("Switching...", vdmList.Count));
-
-									// add new VDM Guid to list, if not existing
-									currentVD = vdm.GetWindowDesktopId(this.Handle);
-									if (!vdmList.ContainsKey(currentVD)) vdmList.Add(currentVD, vdmList.Count + 1);
-
-									// update icon display
-									if (
-											vdmList.TryGetValue(currentVD, out vdNumber)
-											&& vdNumber != priorVDNumber
-										)
-									{
-										this.notifyIcon.Icon = ((System.Drawing.Icon)(resources.GetObject(string.Concat("notifyIcon", vdNumber, ".Icon"))));
-										info = string.Concat("VD: ", vdNumber);
-										notifyIcon.Text = info;
-										this.Text = info;
-										priorVDNumber = vdNumber;
-
-										// Update background image
-										//Wallpaper.Set(
-										//	new System.Uri(iniFile.Read("image", string.Concat("VD", vdNumber)))
-										//	, Wallpaper.Style.Fill
-										//);
-									}
-								},
-							null
-							, 1000
-							, System.Threading.Timeout.Infinite
-						)
-					)
+					using (TestWindow nw = new TestWindow())
 					{
-						// empty
-					};
+						nw.Show(null);
+						vdm.MoveWindowToDesktop(Handle, vdm.GetWindowDesktopId(nw.Handle));
+					}
+
+					//Console.WriteLine(string.Concat("Switching...", vdmList.Count));
+
+					// add new VDM Guid to list, if not existing
+					currentVD = vdm.GetWindowDesktopId(this.Handle);
+					if (!vdmList.ContainsKey(currentVD)) vdmList.Add(currentVD, vdmList.Count + 1);
+
+					// update icon display
+					if (
+							vdmList.TryGetValue(currentVD, out vdNumber)
+							&& vdNumber != priorVDNumber
+						)
+					{
+						this.notifyIcon.Icon = ((System.Drawing.Icon)(resources.GetObject(string.Concat("notifyIcon", vdNumber, ".Icon"))));
+						info = string.Concat("VD: ", vdNumber);
+						notifyIcon.Text = info;
+						this.Text = info;
+						priorVDNumber = vdNumber;
+
+						// Update background image
+						//Wallpaper.Set(
+						//	new System.Uri(iniFile.Read("image", string.Concat("VD", vdNumber)))
+						//	, Wallpaper.Style.Fill
+						//);
+					}
 				}
 			}
 			catch
 			{
 				//This will fail due to race conditions as currently written on occassion
-				//Console.WriteLine("Failed due to race condition");
+				Console.WriteLine("Failed due to race condition");
 			}
 		}
 
@@ -274,7 +262,7 @@ namespace VDTracker
 			else return string.Empty;
 		}
 
-		private string ConvertPathToURI (string path)
+		private string ConvertPathToURI(string path)
 		{
 			return string.Concat(
 				@"file:///"
