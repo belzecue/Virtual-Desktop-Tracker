@@ -27,44 +27,28 @@ namespace VDTracker
 			Fit
 		}
 
-		public static void Set(Uri uri, Style style)
+		public static void Set(int vDesktopNum, IniFile iniFile)
 		{
-			System.IO.Stream s = new System.Net.WebClient().OpenRead(uri.ToString());
+			string vdString = string.Concat("VD", vDesktopNum);
+			string tempPath;
 
-			System.Drawing.Image img = System.Drawing.Image.FromStream(s);
-			string tempPath = Path.Combine(Path.GetTempPath(), "wallpaper.png");
-			img.Save(tempPath, System.Drawing.Imaging.ImageFormat.Png);
+			if (vDesktopNum == 0)
+			{
+				tempPath = iniFile.Read("wallpaper", vdString);
+			}
+			else
+			{
+				System.IO.Stream s = new System.Net.WebClient().OpenRead(
+					iniFile.Read("wallpaper", vdString)
+				);
+				System.Drawing.Image img = System.Drawing.Image.FromStream(s);
+				tempPath = Path.Combine(Path.GetTempPath(), "wallpaper.png");
+				img.Save(tempPath, System.Drawing.Imaging.ImageFormat.Png);
+			}
 
 			RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Control Panel\Desktop", true);
-			if (style == Style.Stretched)
-			{
-				key.SetValue(@"WallpaperStyle", 2.ToString());
-				key.SetValue(@"TileWallpaper", 0.ToString());
-			}
-
-			if (style == Style.Centered)
-			{
-				key.SetValue(@"WallpaperStyle", 0.ToString());
-				key.SetValue(@"TileWallpaper", 0.ToString());
-			}
-
-			if (style == Style.Tiled)
-			{
-				key.SetValue(@"WallpaperStyle", 0.ToString());
-				key.SetValue(@"TileWallpaper", 1.ToString());
-			}
-
-			if (style == Style.Fill)
-			{
-				key.SetValue(@"WallpaperStyle", 10.ToString());
-				key.SetValue(@"TileWallpaper", 0.ToString());
-			}
-
-			if (style == Style.Fit)
-			{
-				key.SetValue(@"WallpaperStyle", 6.ToString());
-				key.SetValue(@"TileWallpaper", 0.ToString());
-			}
+			key.SetValue(@"WallpaperStyle", iniFile.Read("wallpaperStyle", vdString));
+			key.SetValue(@"TileWallpaper", iniFile.Read("tileWallpaper", vdString));
 
 			SystemParametersInfo(SPI_SETDESKWALLPAPER,
 				0,

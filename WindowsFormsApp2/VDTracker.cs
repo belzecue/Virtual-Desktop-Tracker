@@ -22,7 +22,7 @@ namespace VDTracker
 		private Guid currentVD;
 		private int VDCheckInterval = 250;
 		private string info;
-		private IniFile iniFile;
+		private static IniFile iniFile;
 		private string[] origDesktopSetting;
 		private System.ComponentModel.ComponentResourceManager resources;
 
@@ -33,6 +33,11 @@ namespace VDTracker
 				this.Size = Size.Empty;
 				this.FormBorderStyle = FormBorderStyle.None;
 			}
+		}
+
+		static void OnProcessExit(object sender, EventArgs e)
+		{
+			Wallpaper.Set(0, iniFile);
 		}
 
 		public VDWindow()
@@ -110,10 +115,7 @@ namespace VDTracker
 						priorVDNumber = vdNumber;
 
 						// Update background image
-						//Wallpaper.Set(
-						//	new System.Uri(iniFile.Read("image", string.Concat("VD", vdNumber)))
-						//	, Wallpaper.Style.Fill
-						//);
+						Wallpaper.Set(vdNumber, iniFile);
 					}
 				}
 			}
@@ -191,6 +193,11 @@ namespace VDTracker
 				new MenuItem("Show", new System.EventHandler(this.VDWindow_Reveal))
 			);
 			notifyIcon.ContextMenu = menu;
+
+			//
+			// hook into exit for cleanup
+			//
+			AppDomain.CurrentDomain.ProcessExit += new EventHandler(OnProcessExit);
 		}
 
 		#endregion
@@ -215,25 +222,34 @@ namespace VDTracker
 					origDesktopSetting = Wallpaper.GetDesktopSettings();
 
 					// record current desktop wallpaper settings
-					iniFile.Write(
-						"oldWallpaperStyle"
-						, origDesktopSetting[0]
-						, "Application"
-					);
-					iniFile.Write(
-						"oldTileWallpaper"
-						, origDesktopSetting[1]
-						, "Application"
-					);
-					iniFile.Write(
-						"oldWallpaper"
-						, origDesktopSetting[2]
-						, "Application"
-					);
+					iniFile.Write("wallpaperStyle", origDesktopSetting[0], "VD0");
+					iniFile.Write("tileWallpaper", origDesktopSetting[1], "VD0");
+					iniFile.Write("wallpaper", origDesktopSetting[2], "VD0");
 
 					if (iniFile.Read("fileVersion", "Application") == string.Empty)
 					{
 						// no ini file yet, so create a default one
+
+						iniFile.Write(
+							"wallpaperStyles"
+							, string.Concat(
+								"Stretched:2, ", 
+								"Centered:0, ",
+								"Tiled:0, ",
+								"Fill:10, ",
+								"Fit:6"
+							)
+							,"Help"
+						);
+						iniFile.Write(
+							"tileWallpaper"
+							, string.Concat(
+								"Tiled:1, ",
+								"Not Tiled:0"
+							)
+							, "Help"
+						);
+
 						iniFile.Write(
 							"fileVersion"
 							, FileVersionInfo.GetVersionInfo(iniFile.exeName).FileVersion.ToString()

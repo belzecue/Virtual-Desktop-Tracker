@@ -7,7 +7,7 @@ using System.Text;
 
 namespace VDTracker
 {
-	class IniFile   // revision 11
+	public class IniFile   // revision 11
 	{
 		public string path = AppDomain.CurrentDomain.BaseDirectory;
 		public string exeName = System.Reflection.Assembly.GetEntryAssembly().Location;
