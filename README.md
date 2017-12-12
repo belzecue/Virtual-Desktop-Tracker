@@ -10,13 +10,17 @@ Initially the icon will display "0," meaning no virtual desktops are in use.  Wh
 
 Put VDTracker.exe somewhere, create a shortcut to it, open a file explorer with 'shell:startup' and drop the shortcut in there so the program starts as boot.
 
+Learn how to [configure individual virtual desktop backgrounds](https://github.com/belzecue/VDTracker/wiki/Inifile).
+
 ### Prerequisites
 
 Build targetted for dotnet 2.
 
 ## Roadmap
 
-Possibility of adding a virtual desktop background image manager to auto-switch backgrounds -- unless MS eventually beats me to that no-brainer.
+~~Possibility of adding a virtual desktop background image manager to auto-switch backgrounds -- unless MS eventually beats me to that no-brainer.~~
+
+Done.  Coming in release v1.1.
 
 ## License
 
