@@ -84,37 +84,49 @@ namespace VDTracker
 				// move window to current VD
 				if (!vdm.IsWindowOnCurrentVirtualDesktop(Handle))
 				{
+					using (
+						new System.Threading.Timer(
+							(obj) =>
+								{
+									using (TestWindow nw = new TestWindow())
+									{
+										nw.Show(null);
+										vdm.MoveWindowToDesktop(Handle, vdm.GetWindowDesktopId(nw.Handle));
+									}
 
-					using (TestWindow nw = new TestWindow())
-					{
-						nw.Show(null);
-						vdm.MoveWindowToDesktop(Handle, vdm.GetWindowDesktopId(nw.Handle));
-					}
+									//Console.WriteLine(string.Concat("Switching...", vdmList.Count));
 
-					//Console.WriteLine(string.Concat("Switching...", vdmList.Count));
+									// add new VDM Guid to list, if not existing
+									currentVD = vdm.GetWindowDesktopId(this.Handle);
+									if (!vdmList.ContainsKey(currentVD)) vdmList.Add(currentVD, vdmList.Count + 1);
 
-					// add new VDM Guid to list, if not existing
-					currentVD = vdm.GetWindowDesktopId(this.Handle);
-					if (!vdmList.ContainsKey(currentVD)) vdmList.Add(currentVD, vdmList.Count + 1);
+									// update icon display
+									if (
+											vdmList.TryGetValue(currentVD, out vdNumber)
+											&& vdNumber != priorVDNumber
+										)
+									{
+										this.notifyIcon.Icon = ((System.Drawing.Icon)(resources.GetObject(string.Concat("notifyIcon", vdNumber, ".Icon"))));
+										info = string.Concat("VD: ", vdNumber);
+										notifyIcon.Text = info;
+										this.Text = info;
+										priorVDNumber = vdNumber;
 
-					// update icon display
-					if (
-							vdmList.TryGetValue(currentVD, out vdNumber)
-							&& vdNumber != priorVDNumber
+										// Update background image
+										//Wallpaper.Set(
+										//	new System.Uri(iniFile.Read("image", string.Concat("VD", vdNumber)))
+										//	, Wallpaper.Style.Fill
+										//);
+									}
+								},
+							null
+							, 1000
+							, System.Threading.Timeout.Infinite
 						)
+					)
 					{
-						this.notifyIcon.Icon = ((System.Drawing.Icon)(resources.GetObject(string.Concat("notifyIcon", vdNumber, ".Icon"))));
-						info = string.Concat("VD: ", vdNumber);
-						notifyIcon.Text = info;
-						this.Text = info;
-						priorVDNumber = vdNumber;
-
-						// Update background image
-						Wallpaper.Set(
-							new System.Uri(iniFile.Read("image", string.Concat("VD", vdNumber)))
-							, Wallpaper.Style.Fill
-						);
-					}
+						// empty
+					};
 				}
 			}
 			catch
@@ -212,21 +224,45 @@ namespace VDTracker
 				try
 				{
 					iniFile = new IniFile();
+					origDesktopSetting = Wallpaper.GetDesktopSettings();
+
+					// record current desktop wallpaper settings
+					iniFile.Write(
+						"oldWallpaperStyle"
+						, origDesktopSetting[0]
+						, "Application"
+					);
+					iniFile.Write(
+						"oldTileWallpaper"
+						, origDesktopSetting[1]
+						, "Application"
+					);
+					iniFile.Write(
+						"oldWallpaper"
+						, origDesktopSetting[2]
+						, "Application"
+					);
+
 					if (iniFile.Read("fileVersion", "Application") == string.Empty)
 					{
 						// no ini file yet, so create a default one
-						FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(iniFile.path);
-						iniFile.Write("fileVersion", fvi.FileVersion, "Application");
-
-						origDesktopSetting = Wallpaper.GetDesktopSettings();
-						iniFile.Write("origImage", origDesktopSetting[0], "Application");
-						iniFile.Write("origType", origDesktopSetting[1], "Application");
+						iniFile.Write(
+							"fileVersion"
+							, FileVersionInfo.GetVersionInfo(iniFile.exeName).FileVersion.ToString()
+							, "Application"
+						);
 
 						for (int i = 1; i <= 9; i++)
 						{
-							iniFile.Write("image", ConvertPathToURI(origDesktopSetting[0]), string.Concat("VD", i));
+							string vd = string.Concat("VD", i);
+							iniFile.Write("wallpaperStyle", origDesktopSetting[0], vd);
+							iniFile.Write("tileWallpaper", origDesktopSetting[1], vd);
+							iniFile.Write("wallpaper", ConvertPathToURI(origDesktopSetting[2]), vd);
 						}
 					}
+
+					// update current background storage
+
 
 					return string.Empty;
 				}

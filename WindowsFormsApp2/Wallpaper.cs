@@ -74,10 +74,11 @@ namespace VDTracker
 
 		public static string[] GetDesktopSettings()
 		{
-			string[] result = new string[2];
+			string[] result = new string[3];
 			RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Control Panel\Desktop", true);
 			result[0] = key.GetValue("WallpaperStyle").ToString();
 			result[1] = key.GetValue("TileWallpaper").ToString();
+			result[2] = key.GetValue("Wallpaper").ToString();
 			return result;
 		}
 	}

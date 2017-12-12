@@ -10,7 +10,7 @@ namespace VDTracker
 	class IniFile   // revision 11
 	{
 		public string path = AppDomain.CurrentDomain.BaseDirectory;
-		string exeName = Assembly.GetExecutingAssembly().GetName().Name;
+		public string exeName = System.Reflection.Assembly.GetEntryAssembly().Location;
 
 		[DllImport("kernel32", CharSet = CharSet.Unicode)]
 		static extern long WritePrivateProfileString(string Section, string Key, string Value, string FilePath);
