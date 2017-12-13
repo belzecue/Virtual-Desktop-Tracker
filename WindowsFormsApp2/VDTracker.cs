@@ -3,10 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using System.IO;
-using System.Reflection;
 using System.Diagnostics;
-using System.Threading;
 
 namespace VDTracker
 {
@@ -35,7 +32,7 @@ namespace VDTracker
 			}
 		}
 
-		static void OnProcessExit(object sender, EventArgs e)
+		void OnProcessExit()
 		{
 			Wallpaper.Set(0, iniFile);
 		}
@@ -137,6 +134,7 @@ namespace VDTracker
 		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
 		protected override void Dispose(bool disposing)
 		{
+			OnProcessExit();
 			if (disposing && (components != null))
 			{
 				components.Dispose();
@@ -193,11 +191,6 @@ namespace VDTracker
 				new MenuItem("Show", new System.EventHandler(this.VDWindow_Reveal))
 			);
 			notifyIcon.ContextMenu = menu;
-
-			//
-			// hook into exit for cleanup
-			//
-			AppDomain.CurrentDomain.ProcessExit += new EventHandler(OnProcessExit);
 		}
 
 		#endregion
