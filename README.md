@@ -4,7 +4,9 @@ When using Windows 10's virtual desktops feature, there's no way to tell at a gl
 
 This utility program shows a tasktray icon tracking the current virtual desktop number.
 
-Initially the icon will display "0," meaning no virtual desktops are in use.  When the user creates and switches to an alternate desktop, the original desktop will be designated "1" instead of "0" and the new desktop will be "2," and so on.  The program tracks up to 9 concurrent virtual desktops.  (I included only 9 numerical icons!)
+Initially the icon will display "0," meaning no virtual desktops are in use.  When the user creates and switches to an alternate desktop, the original desktop will be designated "1" instead of "0" and the new desktop will be "2," and so on.  The program tracks up to 9 concurrent virtual desktops.
+
+You can also manually set individual desktop background images per virtual desktop via an INI-file.
 
 ## Getting Started
 
@@ -14,17 +16,15 @@ Learn how to [configure individual virtual desktop backgrounds](https://github.c
 
 ### Prerequisites
 
-Build targetted for dotnet 2.
+Build is targetted for dotnet 2.
 
 ## Roadmap
 
-~~Possibility of adding a virtual desktop background image manager to auto-switch backgrounds -- unless MS eventually beats me to that no-brainer.~~
-
-Done.  Coming in release v1.1.
+No futher features planned.
 
 ## License
 
-This project is licensed under the MIT License.
+Copyright 2017 Andrew Ferguson.  Licensed under the MIT License.
 
 ## Acknowledgments
 
