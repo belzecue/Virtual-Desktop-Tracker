@@ -32,6 +32,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>icons8-switch-host-40.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -80,6 +83,8 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="0.ico" />
+    <Content Include="icons8-switch-host-40.ico" />
     <Content Include="Icons\BlueWhite\0.ico" />
     <Content Include="Icons\BlueWhite\1.ico" />
     <Content Include="Icons\BlueWhite\2.ico" />

@@ -226,13 +226,13 @@ namespace VDTracker
 						iniFile.Write(
 							"wallpaperStyles"
 							, string.Concat(
-								"Stretched:2, ", 
+								"Stretched:2, ",
 								"Centered:0, ",
 								"Tiled:0, ",
 								"Fill:10, ",
 								"Fit:6"
 							)
-							,"Help"
+							, "Help"
 						);
 						iniFile.Write(
 							"tileWallpaper"
@@ -257,10 +257,15 @@ namespace VDTracker
 							iniFile.Write("wallpaper", ConvertPathToURI(origDesktopSetting[2]), vd);
 						}
 					}
-
-					// update current background storage
-
-
+					else
+					{
+						// update fileVersion
+						iniFile.Write(
+							"fileVersion"
+							, FileVersionInfo.GetVersionInfo(iniFile.exeName).FileVersion.ToString()
+							, "Application"
+						);
+					}
 					return string.Empty;
 				}
 				catch (Exception ex)
