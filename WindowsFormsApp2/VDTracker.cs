@@ -15,13 +15,14 @@ namespace VDTracker
 		private Dictionary<Guid, int> vdmList = new Dictionary<Guid, int>();
 		private NotifyIcon notifyIcon;
 		private ContextMenu menu;
+		private bool balloonTips = false; 
 		private int vdNumber = 0, priorVDNumber = 0;
 		private Guid currentVD;
 		private int VDCheckInterval = 250;
-		private string info, desktopName;
+		private string info, desktopName, balloonTipValue;
 		private static IniFile iniFile;
 		private string[] origDesktopSetting;
-		private Timer balloonDelayTimer = new Timer() { Interval = 1000 };
+		private Timer balloonDelayTimer = new Timer() { Interval = 1000, Enabled = false };
 		private System.ComponentModel.ComponentResourceManager resources;
 
 		private class TestWindow : NewWindow
@@ -111,6 +112,8 @@ namespace VDTracker
 
 						this.notifyIcon.Icon = ((System.Drawing.Icon)(resources.GetObject(string.Concat("notifyIcon", vdNumber, ".Icon"))));
 						desktopName = iniFile.Read("desktopName", string.Concat("VD", vdNumber));
+						balloonTipValue = iniFile.Read("balloonTips", "Application").ToLower();
+						balloonTips = (balloonTipValue == "false" || balloonTipValue == "0" || balloonTipValue == "no") ? false: true;
 						info = string.Concat(
 							vdNumber
 							, (string.IsNullOrEmpty(desktopName)) ? string.Empty : string.Concat(" : ", desktopName)
@@ -123,7 +126,7 @@ namespace VDTracker
 						Wallpaper.Set(vdNumber, iniFile);
 
 						// start delay timer
-						balloonDelayTimer.Start();
+						if (balloonTips) balloonDelayTimer.Start();
 
 						notifyIcon.Visible = true;
 					}
