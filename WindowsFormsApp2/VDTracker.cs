@@ -21,6 +21,7 @@ namespace VDTracker
 		private string info;
 		private static IniFile iniFile;
 		private string[] origDesktopSetting;
+		private Timer balloonDelayTimer = new Timer() { Interval = 1000 };
 		private System.ComponentModel.ComponentResourceManager resources;
 
 		private class TestWindow : NewWindow
@@ -105,6 +106,9 @@ namespace VDTracker
 							&& vdNumber != priorVDNumber
 						)
 					{
+						notifyIcon.Visible = false;
+						balloonDelayTimer.Stop();
+
 						this.notifyIcon.Icon = ((System.Drawing.Icon)(resources.GetObject(string.Concat("notifyIcon", vdNumber, ".Icon"))));
 						info = string.Concat("VD: ", vdNumber);
 						notifyIcon.Text = info;
@@ -113,6 +117,11 @@ namespace VDTracker
 
 						// Update background image
 						Wallpaper.Set(vdNumber, iniFile);
+
+						// start delay timer
+						balloonDelayTimer.Start();
+
+						notifyIcon.Visible = true;
 					}
 				}
 			}
@@ -175,6 +184,7 @@ namespace VDTracker
 			//
 			// NotifyIcon
 			//
+			balloonDelayTimer.Tick += new EventHandler(BalloonDelayTimer_Tick);
 			this.notifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
 			resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
 
@@ -191,6 +201,20 @@ namespace VDTracker
 				new MenuItem("Show", new System.EventHandler(this.VDWindow_Reveal))
 			);
 			notifyIcon.ContextMenu = menu;
+		}
+
+		private void BalloonDelayTimer_Tick(object sender, EventArgs e)
+		{
+			balloonDelayTimer.Stop();
+			// show a notification
+			notifyIcon.Visible = false;
+			notifyIcon.Visible = true;
+			this.notifyIcon.ShowBalloonTip(
+				1
+				, "Desktop Change"
+				, string.Concat("On desktop: ", info)
+				, ToolTipIcon.Info
+			);
 		}
 
 		#endregion
