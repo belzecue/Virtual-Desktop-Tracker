@@ -18,7 +18,7 @@ namespace VDTracker
 		private int vdNumber = 0, priorVDNumber = 0;
 		private Guid currentVD;
 		private int VDCheckInterval = 250;
-		private string info;
+		private string info, desktopName;
 		private static IniFile iniFile;
 		private string[] origDesktopSetting;
 		private Timer balloonDelayTimer = new Timer() { Interval = 1000 };
@@ -110,7 +110,11 @@ namespace VDTracker
 						balloonDelayTimer.Stop();
 
 						this.notifyIcon.Icon = ((System.Drawing.Icon)(resources.GetObject(string.Concat("notifyIcon", vdNumber, ".Icon"))));
-						info = string.Concat("VD: ", vdNumber);
+						desktopName = iniFile.Read("desktopName", string.Concat("VD", vdNumber));
+						info = string.Concat(
+							vdNumber
+							, (string.IsNullOrEmpty(desktopName)) ? string.Empty : string.Concat(" : ", desktopName)
+						);
 						notifyIcon.Text = info;
 						this.Text = info;
 						priorVDNumber = vdNumber;
@@ -176,7 +180,7 @@ namespace VDTracker
 			this.ClientSize = new System.Drawing.Size(500, 0);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
 			this.Name = "VDWindow";
-			this.Text = string.Concat("VD: ", vdNumber);
+			this.Text = string.Concat("Desktop: ", vdNumber);
 			this.TopMost = true;
 			this.Load += new System.EventHandler(this.VDWindow_Load);
 			this.ResumeLayout(false);
@@ -212,7 +216,7 @@ namespace VDTracker
 			this.notifyIcon.ShowBalloonTip(
 				1
 				, "Desktop Change"
-				, string.Concat("On desktop: ", info)
+				, string.Concat("On Desktop ", info)
 				, ToolTipIcon.Info
 			);
 		}
