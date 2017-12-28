@@ -15,7 +15,7 @@ namespace VDTracker
 		private Dictionary<Guid, int> vdmList = new Dictionary<Guid, int>();
 		private NotifyIcon notifyIcon;
 		private ContextMenu menu;
-		private bool balloonTips = false, changeSuccess = false; 
+		private bool balloonTips = false; 
 		private int vdNumber = 0, priorVDNumber = 0;
 		private Guid currentVD;
 		private int VDCheckInterval = 250;
@@ -84,8 +84,6 @@ namespace VDTracker
 		//The timer always gets triggered which makes the example hopefully less confusing
 		private void VDCheckTimer_Tick(object sender, EventArgs e)
 		{
-			changeSuccess = false;
-			while (!changeSuccess)
 			try
 			{
 				// move window to current VD
@@ -133,11 +131,9 @@ namespace VDTracker
 						notifyIcon.Visible = true;
 					}
 				}
-				changeSuccess = true;
 			}
 			catch
 			{
-				changeSuccess = false;
 				//This will fail due to race conditions as currently written on occassion
 				Console.WriteLine("Failed due to race condition");
 			}
