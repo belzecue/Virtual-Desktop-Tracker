@@ -6,7 +6,7 @@ This utility program shows a tasktray icon tracking the current virtual desktop 
 
 Initially the icon will display "0," meaning no virtual desktops are in use.  When the user creates and switches to an alternate desktop, the original desktop will be designated "1" instead of "0" and the new desktop will be "2," and so on.  The program tracks up to 9 concurrent virtual desktops.
 
-You can also manually set individual desktop background images per virtual desktop via an INI-file.
+**You can also manually set individual desktop background images per virtual desktop via an INI-file.**
 
 ## Getting Started
 
