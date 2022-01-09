@@ -20,7 +20,7 @@ Build is targetted for dotnet 2.
 
 ## Roadmap
 
-No futher features planned.
+No further features planned.
 
 ## License
 
