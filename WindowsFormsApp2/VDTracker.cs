@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.Diagnostics;
+using System.IO;
 
 namespace VDTracker
 {
@@ -77,7 +78,17 @@ namespace VDTracker
 
 		//}
 
-		private void VDWindow_NameDesktop(object sender, EventArgs e)
+		private void VDWindow_PickImage(object sender, EventArgs e)
+		{
+			string result = GetImagePath();
+			if (result != string.Empty)
+            {
+				iniFile.Write("wallpaper", result, string.Concat("VD", vdNumber));
+				Wallpaper.Set(vdNumber, iniFile);
+			}
+		}
+
+			private void VDWindow_NameDesktop(object sender, EventArgs e)
 		{
 			string newName = String.Empty;
 			//Display the custom input dialog box with the following prompt, window title, and dimensions
@@ -104,67 +115,89 @@ namespace VDTracker
 			//Specify the size of the window using the parameters passed
 			Size size = new Size(width, height);
 			//Create a new form using a System.Windows Form
-			Form inputBox = new Form();
+			using (Form inputBox = new Form())
+            {
+				// Screen Position
+				inputBox.StartPosition = FormStartPosition.Manual;
+				int screenWidth = Screen.PrimaryScreen.WorkingArea.Width;
+				int screenHeight = Screen.PrimaryScreen.WorkingArea.Height;
 
-			// Screen Position
-			inputBox.StartPosition = FormStartPosition.Manual;
-			int screenWidth = Screen.PrimaryScreen.WorkingArea.Width;
-			int screenHeight = Screen.PrimaryScreen.WorkingArea.Height;
+				inputBox.Location = new Point(
+					screenWidth - width - (screenWidth / 10),
+					screenHeight - height - (screenHeight / 10)
+				);
 
-			inputBox.Location = new Point(
-				screenWidth - width - (screenWidth / 10),
-				screenHeight - height - (screenHeight / 10)
-			);
+				inputBox.FormBorderStyle = FormBorderStyle.Fixed3D;
+				inputBox.ClientSize = size;
+				//Set the window title using the parameter passed
+				inputBox.Text = title;
 
-			inputBox.FormBorderStyle = FormBorderStyle.Fixed3D;
-			inputBox.ClientSize = size;
-			//Set the window title using the parameter passed
-			inputBox.Text = title;
+				//Create a new label to hold the prompt
+				Label label = new Label();
+				label.Text = prompt;
+				label.Location = new Point(5, 5);
+				label.Width = size.Width - 10;
+				inputBox.Controls.Add(label);
 
-			//Create a new label to hold the prompt
-			Label label = new Label();
-			label.Text = prompt;
-			label.Location = new Point(5, 5);
-			label.Width = size.Width - 10;
-			inputBox.Controls.Add(label);
+				//Create a textbox to accept the user's input
+				TextBox textBox = new TextBox();
+				textBox.Size = new Size(size.Width - 10, 23);
+				textBox.Location = new Point(5, label.Location.Y + 20);
+				textBox.Text = input;
+				inputBox.Controls.Add(textBox);
 
-			//Create a textbox to accept the user's input
-			TextBox textBox = new TextBox();
-			textBox.Size = new Size(size.Width - 10, 23);
-			textBox.Location = new Point(5, label.Location.Y + 20);
-			textBox.Text = input;
-			inputBox.Controls.Add(textBox);
+				//Create an OK Button 
+				Button okButton = new Button();
+				okButton.DialogResult = DialogResult.OK;
+				okButton.Name = "okButton";
+				okButton.Size = new Size(75, 23);
+				okButton.Text = "&OK";
+				okButton.Location = new Point(size.Width - 80 - 80, size.Height - 30);
+				inputBox.Controls.Add(okButton);
 
-			//Create an OK Button 
-			Button okButton = new Button();
-			okButton.DialogResult = DialogResult.OK;
-			okButton.Name = "okButton";
-			okButton.Size = new Size(75, 23);
-			okButton.Text = "&OK";
-			okButton.Location = new Point(size.Width - 80 - 80, size.Height - 30);
-			inputBox.Controls.Add(okButton);
+				//Create a Cancel Button
+				Button cancelButton = new Button();
+				cancelButton.DialogResult = DialogResult.Cancel;
+				cancelButton.Name = "cancelButton";
+				cancelButton.Size = new Size(75, 23);
+				cancelButton.Text = "&Cancel";
+				cancelButton.Location = new Point(size.Width - 80, size.Height - 30);
+				inputBox.Controls.Add(cancelButton);
 
-			//Create a Cancel Button
-			Button cancelButton = new Button();
-			cancelButton.DialogResult = DialogResult.Cancel;
-			cancelButton.Name = "cancelButton";
-			cancelButton.Size = new Size(75, 23);
-			cancelButton.Text = "&Cancel";
-			cancelButton.Location = new Point(size.Width - 80, size.Height - 30);
-			inputBox.Controls.Add(cancelButton);
+				//Set the input box's buttons to the created OK and Cancel Buttons respectively so the window appropriately behaves with the button clicks
+				inputBox.AcceptButton = okButton;
+				inputBox.CancelButton = cancelButton;
 
-			//Set the input box's buttons to the created OK and Cancel Buttons respectively so the window appropriately behaves with the button clicks
-			inputBox.AcceptButton = okButton;
-			inputBox.CancelButton = cancelButton;
+				//Show the window dialog box 
+				DialogResult result = inputBox.ShowDialog();
+				input = textBox.Text;
 
-			//Show the window dialog box 
-			DialogResult result = inputBox.ShowDialog();
-			input = textBox.Text;
+				//After input has been submitted, return the input value
+				return result;
+			}
 
-			//After input has been submitted, return the input value
-			return result;
 		}
 
+		private string GetImagePath()
+        {
+			var filePath = string.Empty;
+
+			using (OpenFileDialog openFileDialog = new OpenFileDialog())
+			{
+				openFileDialog.InitialDirectory = "c:\\";
+				openFileDialog.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
+				openFileDialog.FilterIndex = 2;
+				openFileDialog.RestoreDirectory = true;
+
+				if (openFileDialog.ShowDialog() == DialogResult.OK)
+				{
+					//Get the path of specified file
+					filePath = openFileDialog.FileName;
+				}
+			}
+
+			return filePath;
+		}
 
 		//Timer tick to check if the window is on the current virtual desktop and change it otherwise
 		//A timer does not have to be used, but something has to trigger the check
@@ -289,9 +322,12 @@ namespace VDTracker
 			//
 			menu = new ContextMenu();
 			menu.MenuItems.Add(0,
-				new MenuItem("Name this desktop", new System.EventHandler(this.VDWindow_NameDesktop))
+				new MenuItem("Name desktop", new System.EventHandler(this.VDWindow_NameDesktop))
 			);
 			menu.MenuItems.Add(1,
+				new MenuItem("Choose pic", new System.EventHandler(this.VDWindow_PickImage))
+			);
+			menu.MenuItems.Add(2,
 				new MenuItem("Exit", new System.EventHandler(this.VDWindow_Exit))
 			);
 			//menu.MenuItems.Add(2,
@@ -403,13 +439,7 @@ namespace VDTracker
 			else return string.Empty;
 		}
 
-		private string ConvertPathToURI(string path)
-		{
-			return string.Concat(
-				@"file:///"
-				, path.Replace(@"\", "/")
-		   );
-		}
+
 	}
 	[ComImport, InterfaceType(ComInterfaceType.InterfaceIsIUnknown), Guid("a5cd92ff-29be-454c-8d04-d82879fb3f1b")]
 	[System.Security.SuppressUnmanagedCodeSecurity]
