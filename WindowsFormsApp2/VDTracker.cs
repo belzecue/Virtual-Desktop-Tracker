@@ -289,7 +289,7 @@ namespace VDTracker
 							string vd = string.Concat("VD", i);
 							iniFile.Write("wallpaperStyle", origDesktopSetting[0], vd);
 							iniFile.Write("tileWallpaper", origDesktopSetting[1], vd);
-							iniFile.Write("wallpaper", ConvertPathToURI(origDesktopSetting[2]), vd);
+							iniFile.Write("wallpaper", origDesktopSetting[2], vd);
 						}
 					}
 					else

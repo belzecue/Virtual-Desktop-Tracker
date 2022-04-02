@@ -1,6 +1,8 @@
 ﻿using Microsoft.Win32;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Drawing;
+using System.Drawing.Imaging;
 
 
 namespace VDTracker
@@ -29,23 +31,19 @@ namespace VDTracker
 		public static void Set(int vDesktopNum, IniFile iniFile)
 		{
 			string vdString = string.Concat("VD", vDesktopNum);
-			string tempPath;
+			string tempPath = @Path.Combine(Path.GetTempPath(), "vdtracker_wallpaper.png");
+			string wallpaperPath = @iniFile.Read("wallpaper", vdString);
 
-			string wallpaperPath = iniFile.Read("wallpaper", vdString);
-			if (wallpaperPath == @"file:///") { wallpaperPath = string.Empty; }
-
-			if (vDesktopNum == 0 || wallpaperPath == string.Empty)
+			if (vDesktopNum > 0 && File.Exists(wallpaperPath))
 			{
-				tempPath = wallpaperPath;
+				using (Image image = Image.FromFile(wallpaperPath))
+                {
+					image.Save(tempPath, ImageFormat.Png);
+				}
 			}
 			else
-			{
-				System.IO.Stream s = new System.Net.WebClient().OpenRead(
-					wallpaperPath
-				);
-				System.Drawing.Image img = System.Drawing.Image.FromStream(s);
-				tempPath = Path.Combine(Path.GetTempPath(), "wallpaper.png");
-				img.Save(tempPath, System.Drawing.Imaging.ImageFormat.Png);
+            {
+				tempPath = wallpaperPath;
 			}
 
 			RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Control Panel\Desktop", true);
@@ -64,7 +62,7 @@ namespace VDTracker
 			RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Control Panel\Desktop", true);
 			result[0] = key.GetValue("WallpaperStyle").ToString();
 			result[1] = key.GetValue("TileWallpaper").ToString();
-			result[2] = key.GetValue("Wallpaper").ToString();
+			result[2] = @key.GetValue("Wallpaper").ToString();
 
 			return result;
 		}
