@@ -7,6 +7,8 @@ namespace VDTracker
 {
 	public sealed class Wallpaper
 	{
+		// See this reference code from 2011: https://gist.github.com/belzecue/5b2be19151567ea11761cefb3aae357a
+
 		Wallpaper() { }
 
 		[DllImport("user32.dll", CharSet = CharSet.Auto)]
