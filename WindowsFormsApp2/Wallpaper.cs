@@ -32,6 +32,14 @@ namespace VDTracker
 			string vdString = string.Concat("VD", vDesktopNum);
 			string tempPath;
 
+			string wallpaperPath = iniFile.Read("wallpaper", vdString);
+
+			// Early out if wallpaper path empty or is invalid.
+			if (String.IsNullOrEmpty(wallpaperPath) || wallpaperPath == @"file:///")
+            {
+				return;
+            }
+
 			if (vDesktopNum == 0)
 			{
 				tempPath = iniFile.Read("wallpaper", vdString);
