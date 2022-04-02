@@ -4,7 +4,7 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.Diagnostics;
-using System.IO;
+
 
 namespace VDTracker
 {
@@ -185,7 +185,7 @@ namespace VDTracker
 			using (OpenFileDialog openFileDialog = new OpenFileDialog())
 			{
 				openFileDialog.InitialDirectory = "c:\\";
-				openFileDialog.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
+				openFileDialog.Filter = "png (*.png)|jpg (*.jpg)|All files (*.*)|*.*";
 				openFileDialog.FilterIndex = 2;
 				openFileDialog.RestoreDirectory = true;
 
@@ -344,7 +344,7 @@ namespace VDTracker
 			notifyIcon.Visible = true;
 			this.notifyIcon.ShowBalloonTip(
 				1
-				, "Desktop Change"
+				, ""
 				, string.Concat("On Desktop ", info)
 				, ToolTipIcon.Info
 			);

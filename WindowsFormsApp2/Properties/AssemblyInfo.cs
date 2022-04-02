@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("VDTracker")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("Windows Virtual Desktop Tracker")]
+[assembly: AssemblyDescription("Allows different background pics for each desktop")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("VDTracker")]
-[assembly: AssemblyCopyright("Copyright ©  2017")]
+[assembly: AssemblyProduct("Virtual Desktop Tracker")]
+[assembly: AssemblyCopyright("CC0 where possible")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
