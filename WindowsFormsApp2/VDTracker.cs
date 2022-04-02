@@ -86,6 +86,14 @@ namespace VDTracker
             {
 				desktopName = newName;
 				iniFile.Write("desktopName", newName, string.Concat("VD", vdNumber));
+
+				// Update icon tooltip.
+				info = string.Concat(
+					vdNumber
+					, (string.IsNullOrEmpty(desktopName)) ? string.Empty : string.Concat(" : ", desktopName)
+				);
+				notifyIcon.Text = info;
+				this.Text = info;
 			}
 		}
 
