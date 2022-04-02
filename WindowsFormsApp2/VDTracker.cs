@@ -71,11 +71,92 @@ namespace VDTracker
 			Application.Exit();
 		}
 
-		private void VDWindow_Reveal(object sender, EventArgs e)
-		{
-			this.WindowState = FormWindowState.Normal;
+		//private void VDWindow_Reveal(object sender, EventArgs e)
+		//{
+		//	this.WindowState = FormWindowState.Normal;
 
+		//}
+
+		private void VDWindow_NameDesktop(object sender, EventArgs e)
+		{
+			string newName = String.Empty;
+			//Display the custom input dialog box with the following prompt, window title, and dimensions
+			ShowInputDialogBox(ref newName, "Name this desktop:", "Virtual Desktop Tracker", 200, 100);
+			if (newName != String.Empty)
+            {
+				desktopName = newName;
+				iniFile.Write("desktopName", newName, string.Concat("VD", vdNumber));
+			}
 		}
+
+		private static DialogResult ShowInputDialogBox(ref string input, string prompt, string title = "Title", int width = 300, int height = 200)
+		{
+			//This function creates the custom input dialog box by individually creating the different window elements and adding them to the dialog box
+
+			//Specify the size of the window using the parameters passed
+			Size size = new Size(width, height);
+			//Create a new form using a System.Windows Form
+			Form inputBox = new Form();
+
+			// Screen Position
+			inputBox.StartPosition = FormStartPosition.Manual;
+			int screenWidth = Screen.PrimaryScreen.WorkingArea.Width;
+			int screenHeight = Screen.PrimaryScreen.WorkingArea.Height;
+
+			inputBox.Location = new Point(
+				screenWidth - width - (screenWidth / 10),
+				screenHeight - height - (screenHeight / 10)
+			);
+
+			inputBox.FormBorderStyle = FormBorderStyle.Fixed3D;
+			inputBox.ClientSize = size;
+			//Set the window title using the parameter passed
+			inputBox.Text = title;
+
+			//Create a new label to hold the prompt
+			Label label = new Label();
+			label.Text = prompt;
+			label.Location = new Point(5, 5);
+			label.Width = size.Width - 10;
+			inputBox.Controls.Add(label);
+
+			//Create a textbox to accept the user's input
+			TextBox textBox = new TextBox();
+			textBox.Size = new Size(size.Width - 10, 23);
+			textBox.Location = new Point(5, label.Location.Y + 20);
+			textBox.Text = input;
+			inputBox.Controls.Add(textBox);
+
+			//Create an OK Button 
+			Button okButton = new Button();
+			okButton.DialogResult = DialogResult.OK;
+			okButton.Name = "okButton";
+			okButton.Size = new Size(75, 23);
+			okButton.Text = "&OK";
+			okButton.Location = new Point(size.Width - 80 - 80, size.Height - 30);
+			inputBox.Controls.Add(okButton);
+
+			//Create a Cancel Button
+			Button cancelButton = new Button();
+			cancelButton.DialogResult = DialogResult.Cancel;
+			cancelButton.Name = "cancelButton";
+			cancelButton.Size = new Size(75, 23);
+			cancelButton.Text = "&Cancel";
+			cancelButton.Location = new Point(size.Width - 80, size.Height - 30);
+			inputBox.Controls.Add(cancelButton);
+
+			//Set the input box's buttons to the created OK and Cancel Buttons respectively so the window appropriately behaves with the button clicks
+			inputBox.AcceptButton = okButton;
+			inputBox.CancelButton = cancelButton;
+
+			//Show the window dialog box 
+			DialogResult result = inputBox.ShowDialog();
+			input = textBox.Text;
+
+			//After input has been submitted, return the input value
+			return result;
+		}
+
 
 		//Timer tick to check if the window is on the current virtual desktop and change it otherwise
 		//A timer does not have to be used, but something has to trigger the check
@@ -105,6 +186,7 @@ namespace VDTracker
 							&& vdNumber != priorVDNumber
 						)
 					{
+						priorVDNumber = vdNumber;
 						notifyIcon.Visible = false;
 						balloonDelayTimer.Stop();
 
@@ -118,7 +200,6 @@ namespace VDTracker
 						);
 						notifyIcon.Text = info;
 						this.Text = info;
-						priorVDNumber = vdNumber;
 
 						// Update background image
 						Wallpaper.Set(vdNumber, iniFile);
@@ -133,7 +214,7 @@ namespace VDTracker
 			catch
 			{
 				//This will fail due to race conditions as currently written on occassion
-				Console.WriteLine("Failed due to race condition");
+				Console.WriteLine("VDCheckTimer_Tick failed due to race condition");
 			}
 		}
 
@@ -200,11 +281,14 @@ namespace VDTracker
 			//
 			menu = new ContextMenu();
 			menu.MenuItems.Add(0,
-				new MenuItem("Exit", new System.EventHandler(this.VDWindow_Exit))
+				new MenuItem("Name this desktop", new System.EventHandler(this.VDWindow_NameDesktop))
 			);
 			menu.MenuItems.Add(1,
-				new MenuItem("Show", new System.EventHandler(this.VDWindow_Reveal))
+				new MenuItem("Exit", new System.EventHandler(this.VDWindow_Exit))
 			);
+			//menu.MenuItems.Add(2,
+			//	new MenuItem("Show", new System.EventHandler(this.VDWindow_Reveal))
+			//);
 			notifyIcon.ContextMenu = menu;
 		}
 
