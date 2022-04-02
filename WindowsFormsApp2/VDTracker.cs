@@ -43,8 +43,6 @@ namespace VDTracker
 		public VDWindow()
 		{
 			InitializeComponent();
-			//BackColor = Color.Magenta;
-			//TransparencyKey = Color.Magenta;
 
 			// Initialize INI file
 			string result;
@@ -175,7 +173,6 @@ namespace VDTracker
 				//After input has been submitted, return the input value
 				return result;
 			}
-
 		}
 
 		private string GetImagePath()
@@ -292,9 +289,9 @@ namespace VDTracker
 			// 
 			// VDCheckTimer
 			// 
-			this.VDCheckTimer.Enabled = true;
 			this.VDCheckTimer.Interval = VDCheckInterval;
 			this.VDCheckTimer.Tick += new System.EventHandler(this.VDCheckTimer_Tick);
+			this.VDCheckTimer.Enabled = true;
 			// 
 			// VDWindow
 			// 
