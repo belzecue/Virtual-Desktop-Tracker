@@ -1,9 +1,7 @@
 ﻿using Microsoft.Win32;
-using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
-using System.Text;
+
 
 namespace VDTracker
 {
@@ -11,12 +9,11 @@ namespace VDTracker
 	{
 		Wallpaper() { }
 
+		[DllImport("user32.dll", CharSet = CharSet.Auto)]
+		static extern int SystemParametersInfo(int uAction, int uParam, string lpvParam, int fuWinIni);
 		const int SPI_SETDESKWALLPAPER = 20;
 		const int SPIF_UPDATEINIFILE = 0x01;
 		const int SPIF_SENDWININICHANGE = 0x02;
-
-		[DllImport("user32.dll", CharSet = CharSet.Auto)]
-		static extern int SystemParametersInfo(int uAction, int uParam, string lpvParam, int fuWinIni);
 
 		public enum Style : int
 		{
@@ -33,21 +30,16 @@ namespace VDTracker
 			string tempPath;
 
 			string wallpaperPath = iniFile.Read("wallpaper", vdString);
+			if (wallpaperPath == @"file:///") { wallpaperPath = string.Empty; }
 
-			// Early out if wallpaper path empty or is invalid.
-			if (String.IsNullOrEmpty(wallpaperPath) || wallpaperPath == @"file:///")
-            {
-				return;
-            }
-
-			if (vDesktopNum == 0)
+			if (vDesktopNum == 0 || wallpaperPath == string.Empty)
 			{
-				tempPath = iniFile.Read("wallpaper", vdString);
+				tempPath = wallpaperPath;
 			}
 			else
 			{
 				System.IO.Stream s = new System.Net.WebClient().OpenRead(
-					iniFile.Read("wallpaper", vdString)
+					wallpaperPath
 				);
 				System.Drawing.Image img = System.Drawing.Image.FromStream(s);
 				tempPath = Path.Combine(Path.GetTempPath(), "wallpaper.png");
@@ -64,13 +56,14 @@ namespace VDTracker
 				SPIF_UPDATEINIFILE | SPIF_SENDWININICHANGE);
 		}
 
-		public static string[] GetDesktopSettings()
+		public static string[] GetOrigDesktopSettings()
 		{
 			string[] result = new string[3];
 			RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Control Panel\Desktop", true);
 			result[0] = key.GetValue("WallpaperStyle").ToString();
 			result[1] = key.GetValue("TileWallpaper").ToString();
 			result[2] = key.GetValue("Wallpaper").ToString();
+
 			return result;
 		}
 	}

@@ -95,8 +95,6 @@ namespace VDTracker
 						vdm.MoveWindowToDesktop(Handle, vdm.GetWindowDesktopId(nw.Handle));
 					}
 
-					//Console.WriteLine(string.Concat("Switching...", vdmList.Count));
-
 					// add new VDM Guid to list, if not existing
 					currentVD = vdm.GetWindowDesktopId(this.Handle);
 					if (!vdmList.ContainsKey(currentVD)) vdmList.Add(currentVD, vdmList.Count + 1);
@@ -243,7 +241,7 @@ namespace VDTracker
 				try
 				{
 					iniFile = new IniFile();
-					origDesktopSetting = Wallpaper.GetDesktopSettings();
+					origDesktopSetting = Wallpaper.GetOrigDesktopSettings();
 
 					// record current desktop wallpaper settings
 					iniFile.Write("wallpaperStyle", origDesktopSetting[0], "VD0");
@@ -277,6 +275,12 @@ namespace VDTracker
 						iniFile.Write(
 							"fileVersion"
 							, FileVersionInfo.GetVersionInfo(iniFile.exeName).FileVersion.ToString()
+							, "Application"
+						);
+
+						iniFile.Write(
+							"balloonTips"
+							, "true"
 							, "Application"
 						);
 
