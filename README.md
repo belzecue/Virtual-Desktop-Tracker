@@ -24,7 +24,7 @@ No further features planned.
 
 ## License
 
-Copyright 2017 Andrew Ferguson.  Licensed under the MIT License.
+CC0 where possible.
 
 ## Acknowledgments
 
