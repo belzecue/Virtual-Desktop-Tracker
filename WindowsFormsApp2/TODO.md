@@ -9,3 +9,11 @@ TODO
 * Add Change display mode (fit, zoom, center etc.)
 * Add Tiling mode
 
+# Rename Desktop
+
+* Improve look of rename panel.
+
+# Bugs
+
+
+

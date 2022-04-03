@@ -33,6 +33,8 @@ namespace VDTracker
 			string vdString = string.Concat("VD", vDesktopNum);
 			string tempPath = @Path.Combine(Path.GetTempPath(), "vdtracker_wallpaper.png");
 			string wallpaperPath = @iniFile.Read("wallpaper", vdString);
+			string wallpaperStyle = iniFile.Read("wallpaperStyle", vdString);
+			string tileWallpaper = iniFile.Read("tileWallpaper", vdString);
 
 			if (vDesktopNum > 0 && File.Exists(wallpaperPath))
 			{
@@ -47,8 +49,8 @@ namespace VDTracker
 			}
 
 			RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Control Panel\Desktop", true);
-			key.SetValue(@"WallpaperStyle", iniFile.Read("wallpaperStyle", vdString));
-			key.SetValue(@"TileWallpaper", iniFile.Read("tileWallpaper", vdString));
+			key.SetValue("WallpaperStyle", wallpaperStyle);
+			key.SetValue("TileWallpaper", tileWallpaper);
 
 			SystemParametersInfo(SPI_SETDESKWALLPAPER,
 				0,

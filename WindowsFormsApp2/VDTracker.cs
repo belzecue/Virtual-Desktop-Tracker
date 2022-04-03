@@ -37,6 +37,7 @@ namespace VDTracker
 
 		void OnProcessExit()
 		{
+			// Reset background to original wallpaper settings.
 			Wallpaper.Set(0, iniFile);
 		}
 
@@ -76,8 +77,12 @@ namespace VDTracker
 
 		//}
 
+
 		private void VDWindow_PickImage(object sender, EventArgs e)
 		{
+			// Early out for vd0.  We never alter the original desktop wallpaper property.
+			if (vdNumber == 0) { return; }
+
 			string result = GetImagePath();
 			if (result != string.Empty)
             {
@@ -90,8 +95,8 @@ namespace VDTracker
 		{
 			string newName = String.Empty;
 			//Display the custom input dialog box with the following prompt, window title, and dimensions
-			ShowInputDialogBox(ref newName, "Name this desktop:", "Virtual Desktop Tracker", 200, 100);
-			if (newName != String.Empty)
+			DialogResult result = ShowInputDialogBox(ref newName, "Name this desktop:", "Virtual Desktop Tracker", 200, 100);
+			if (result == DialogResult.OK && newName != String.Empty)
             {
 				desktopName = newName;
 				iniFile.Write("desktopName", newName, string.Concat("VD", vdNumber));
@@ -139,7 +144,7 @@ namespace VDTracker
 
 				//Create a textbox to accept the user's input
 				TextBox textBox = new TextBox();
-				textBox.Size = new Size(size.Width - 10, 23);
+				textBox.Size = new Size(size.Width - 10, 25);
 				textBox.Location = new Point(5, label.Location.Y + 20);
 				textBox.Text = input;
 				inputBox.Controls.Add(textBox);
@@ -168,7 +173,7 @@ namespace VDTracker
 
 				//Show the window dialog box 
 				DialogResult result = inputBox.ShowDialog();
-				input = textBox.Text;
+				if (result == DialogResult.OK) { input = textBox.Text; }
 
 				//After input has been submitted, return the input value
 				return result;
