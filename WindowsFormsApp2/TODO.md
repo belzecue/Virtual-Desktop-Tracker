@@ -15,5 +15,9 @@ TODO
 
 # Bugs
 
+* If startup desktop is vd0 then increment an inifile counter and restart
+If startup is not, then reset the counter and all is good.
+Allow for 10 consecutive restarts then flag to never restart until inifile counter is cleared.
+
 
 

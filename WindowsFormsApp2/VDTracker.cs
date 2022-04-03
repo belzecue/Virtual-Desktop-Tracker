@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.Diagnostics;
 using VDTracker.Properties;
+using System.IO;
 
 namespace VDTracker
 {
@@ -78,6 +79,25 @@ namespace VDTracker
 		//}
 
 
+		private void VDWindow_Notifications(object sender, EventArgs e)
+		{
+			// Toggle balloonTip notifications on/off.
+
+			balloonTipValue = iniFile.Read("balloonTips", "Application").ToLower();
+			if (balloonTipValue == "false" || balloonTipValue == "0" || balloonTipValue == "no") 
+			{
+				balloonTipValue = "true";
+				balloonTips = true; 
+			}
+			else if (balloonTipValue == "true" || balloonTipValue == "1" || balloonTipValue == "yes")
+			{
+				balloonTipValue = "false";
+				balloonTips = false; 
+			}
+			iniFile.Write("balloonTips", balloonTipValue, "Application");
+		}
+
+
 		private void VDWindow_PickImage(object sender, EventArgs e)
 		{
 			// Early out for vd0.  We never alter the original desktop wallpaper property.
@@ -93,6 +113,9 @@ namespace VDTracker
 
 			private void VDWindow_NameDesktop(object sender, EventArgs e)
 		{
+			// Early out for vd0.
+			if (vdNumber == 0) { return; }
+
 			string newName = String.Empty;
 			//Display the custom input dialog box with the following prompt, window title, and dimensions
 			DialogResult result = ShowInputDialogBox(ref newName, "Name this desktop:", "Virtual Desktop Tracker", 200, 100);
@@ -182,19 +205,21 @@ namespace VDTracker
 
 		private string GetImagePath()
         {
-			var filePath = string.Empty;
+			string filePath = string.Empty;
+			string mruPicPath = iniFile.Read("picPath", "MRU");
 
 			using (OpenFileDialog openFileDialog = new OpenFileDialog())
 			{
-				openFileDialog.InitialDirectory = "c:\\";
+				openFileDialog.InitialDirectory = string.IsNullOrEmpty(mruPicPath) ? "C:\\" : mruPicPath;
 				openFileDialog.Filter = "png (*.png)|*.png|jpg (*.jpg)|*.jpg|All files (*.*)|*.*";
 				openFileDialog.FilterIndex = 3;
-				openFileDialog.RestoreDirectory = false;
+				openFileDialog.RestoreDirectory = true;
 
 				if (openFileDialog.ShowDialog() == DialogResult.OK)
 				{
 					//Get the path of specified file
 					filePath = openFileDialog.FileName;
+					iniFile.Write("picPath", Path.GetDirectoryName(filePath), "MRU");
 				}
 			}
 
@@ -330,6 +355,12 @@ namespace VDTracker
 				new MenuItem("Choose pic", new System.EventHandler(this.VDWindow_PickImage))
 			);
 			menu.MenuItems.Add(2,
+				new MenuItem(
+					"Toggle Notification",
+					new System.EventHandler(this.VDWindow_Notifications)
+				)
+			);
+			menu.MenuItems.Add(3,
 				new MenuItem("Exit", new System.EventHandler(this.VDWindow_Exit))
 			);
 			//menu.MenuItems.Add(2,
