@@ -283,6 +283,21 @@ namespace VDTracker
 			{
 				//This will fail due to race conditions as currently written on occassion
 				Console.WriteLine("VDCheckTimer_Tick failed due to race condition");
+
+				// Workaround for race condition.
+				// Quit and reload up to a max number of times.
+				string strRestarts = iniFile.Read("restarts", "Application");
+				int restarts = 0;
+				int.TryParse(strRestarts, out restarts);
+
+				//if (restarts > 10)
+				//{
+				//	throw new Exception("Failed to start 10 times or more!");
+				//}
+
+				restarts++;
+				iniFile.Write("restarts", restarts.ToString(), "Application");
+				Application.Restart();
 			}
 		}
 
