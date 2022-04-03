@@ -118,7 +118,7 @@ namespace VDTracker
 
 			string newName = String.Empty;
 			//Display the custom input dialog box with the following prompt, window title, and dimensions
-			DialogResult result = ShowInputDialogBox(ref newName, "Name this desktop:", "Virtual Desktop Tracker", 200, 100);
+			DialogResult result = ShowInputDialogBox(ref newName, "Name this desktop:", "Virtual Desktop Tracker", 300, 100);
 			if (result == DialogResult.OK && newName != String.Empty)
             {
 				desktopName = newName;
@@ -168,7 +168,7 @@ namespace VDTracker
 				//Create a textbox to accept the user's input
 				TextBox textBox = new TextBox();
 				textBox.Size = new Size(size.Width - 10, 25);
-				textBox.Location = new Point(5, label.Location.Y + 20);
+				textBox.Location = new Point(5, label.Location.Y + 25);
 				textBox.Text = input;
 				inputBox.Controls.Add(textBox);
 
