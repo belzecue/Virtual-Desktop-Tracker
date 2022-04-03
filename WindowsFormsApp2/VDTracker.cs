@@ -4,7 +4,7 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.Diagnostics;
-
+using VDTracker.Properties;
 
 namespace VDTracker
 {
@@ -182,9 +182,9 @@ namespace VDTracker
 			using (OpenFileDialog openFileDialog = new OpenFileDialog())
 			{
 				openFileDialog.InitialDirectory = "c:\\";
-				openFileDialog.Filter = "png (*.png)|jpg (*.jpg)|All files (*.*)|*.*";
-				openFileDialog.FilterIndex = 2;
-				openFileDialog.RestoreDirectory = true;
+				openFileDialog.Filter = "png (*.png)|*.png|jpg (*.jpg)|*.jpg|All files (*.*)|*.*";
+				openFileDialog.FilterIndex = 3;
+				openFileDialog.RestoreDirectory = false;
 
 				if (openFileDialog.ShowDialog() == DialogResult.OK)
 				{
@@ -499,8 +499,14 @@ namespace VDTracker
 		{
 			Guid result;
 			int hr;
+			if (Settings.Default.debug == true) { Console.WriteLine(TopLevelWindow); }
 			if ((hr = manager.GetWindowDesktopId(TopLevelWindow, out result)) != 0)
 			{
+				if (Settings.Default.debug == true)
+				{
+					Console.WriteLine(result);
+					Console.WriteLine("GetWindowDesktopId is source");
+				}
 				Marshal.ThrowExceptionForHR(hr);
 			}
 			return result;
@@ -511,6 +517,7 @@ namespace VDTracker
 			int hr;
 			if ((hr = manager.MoveWindowToDesktop(TopLevelWindow, CurrentDesktop)) != 0)
 			{
+				if (Settings.Default.debug == true)	{ Console.WriteLine("MoveWindowToDesktop is source");	}
 				Marshal.ThrowExceptionForHR(hr);
 			}
 		}
