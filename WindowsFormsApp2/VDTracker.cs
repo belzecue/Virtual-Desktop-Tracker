@@ -18,9 +18,9 @@ namespace VDTracker
 		private NotifyIcon notifyIcon;
 		private ContextMenu menu;
 		private bool balloonTips = false; 
-		private int vdNumber = 0, priorVDNumber = 0;
+		private int vdNumber = 0;
 		private Guid currentVD;
-		private int VDCheckInterval = 250;
+		private int VDCheckInterval = 333;
 		private string info, desktopName, balloonTipValue;
 		private static IniFile iniFile;
 		private string[] origDesktopSetting;
@@ -251,10 +251,8 @@ namespace VDTracker
 					// update icon display
 					if (
 							vdmList.TryGetValue(currentVD, out vdNumber)
-							&& vdNumber != priorVDNumber
 						)
 					{
-						priorVDNumber = vdNumber;
 						notifyIcon.Visible = false;
 						balloonDelayTimer.Stop();
 
@@ -284,20 +282,12 @@ namespace VDTracker
 				//This will fail due to race conditions as currently written on occassion
 				Console.WriteLine("VDCheckTimer_Tick failed due to race condition");
 
-				// Workaround for race condition.
-				// Quit and reload up to a max number of times.
 				string strRestarts = iniFile.Read("restarts", "Application");
 				int restarts = 0;
 				int.TryParse(strRestarts, out restarts);
 
-				//if (restarts > 10)
-				//{
-				//	throw new Exception("Failed to start 10 times or more!");
-				//}
-
 				restarts++;
 				iniFile.Write("restarts", restarts.ToString(), "Application");
-				Application.Restart();
 			}
 		}
 
@@ -454,6 +444,13 @@ namespace VDTracker
 							, "Application"
 						);
 
+						//VDCheckInterval
+						iniFile.Write(
+							"checkInterval"
+							, VDCheckInterval.ToString()
+							, "Application"
+						);
+
 						iniFile.Write(
 							"balloonTips"
 							, "true"
@@ -477,6 +474,10 @@ namespace VDTracker
 							, "Application"
 						);
 					}
+
+					// Get check interval, if exists in ini file.
+					int.TryParse(iniFile.Read("checkInterval", "Application"), out VDCheckInterval);
+
 					return string.Empty;
 				}
 				catch (Exception ex)
