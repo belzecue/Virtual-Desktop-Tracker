@@ -21,11 +21,13 @@ namespace VDTracker
 		private int vdNumber = 0;
 		private Guid currentVD;
 		private int VDCheckInterval = 333;
-		private string info, desktopName, balloonTipValue;
+		private string info, desktopName;
 		private static IniFile iniFile;
 		private string[] origDesktopSetting;
 		private Timer balloonDelayTimer = new Timer() { Interval = 1000, Enabled = false };
 		private System.ComponentModel.ComponentResourceManager resources;
+		MenuItem toggleMenuItem;
+		string toggleNotificationLabel = "Toggle notification";
 
 		private class TestWindow : NewWindow
 		{
@@ -83,18 +85,11 @@ namespace VDTracker
 		{
 			// Toggle balloonTip notifications on/off.
 
-			balloonTipValue = iniFile.Read("balloonTips", "Application").ToLower();
-			if (balloonTipValue == "false" || balloonTipValue == "0" || balloonTipValue == "no") 
-			{
-				balloonTipValue = "true";
-				balloonTips = true; 
+			if (bool.TryParse(iniFile.Read("balloonTips", "Application"), out balloonTips))
+            {
+				balloonTips = !balloonTips;
+				iniFile.Write("balloonTips", balloonTips.ToString(), "Application");
 			}
-			else if (balloonTipValue == "true" || balloonTipValue == "1" || balloonTipValue == "yes")
-			{
-				balloonTipValue = "false";
-				balloonTips = false; 
-			}
-			iniFile.Write("balloonTips", balloonTipValue, "Application");
 		}
 
 
@@ -258,8 +253,7 @@ namespace VDTracker
 
 						this.notifyIcon.Icon = ((System.Drawing.Icon)(resources.GetObject(string.Concat("notifyIcon", vdNumber, ".Icon"))));
 						desktopName = iniFile.Read("desktopName", string.Concat("VD", vdNumber));
-						balloonTipValue = iniFile.Read("balloonTips", "Application").ToLower();
-						balloonTips = (balloonTipValue == "false" || balloonTipValue == "0" || balloonTipValue == "no") ? false: true;
+						bool.TryParse(iniFile.Read("balloonTips", "Application"), out balloonTips);
 						info = string.Concat(
 							vdNumber
 							, (string.IsNullOrEmpty(desktopName)) ? string.Empty : string.Concat(" : ", desktopName)
@@ -276,6 +270,7 @@ namespace VDTracker
 						notifyIcon.Visible = true;
 					}
 				}
+				toggleMenuItem.Text = toggleNotificationLabel + " " + ((balloonTips) ? "OFF" : "ON");
 			}
 			catch
 			{
@@ -359,12 +354,11 @@ namespace VDTracker
 			menu.MenuItems.Add(1,
 				new MenuItem("Choose pic", new System.EventHandler(this.VDWindow_PickImage))
 			);
-			menu.MenuItems.Add(2,
-				new MenuItem(
-					"Toggle Notification",
+			toggleMenuItem = new MenuItem(
+					toggleNotificationLabel,
 					new System.EventHandler(this.VDWindow_Notifications)
-				)
 			);
+			menu.MenuItems.Add(2, toggleMenuItem);
 			menu.MenuItems.Add(3,
 				new MenuItem("Exit", new System.EventHandler(this.VDWindow_Exit))
 			);
@@ -453,7 +447,7 @@ namespace VDTracker
 
 						iniFile.Write(
 							"balloonTips"
-							, "true"
+							, "True"
 							, "Application"
 						);
 
